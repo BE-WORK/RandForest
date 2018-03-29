@@ -13,7 +13,7 @@ def pcap_to_csv_bat_generator():
         os.mkdir('data_csv')
 
     # 从pcap文件提取目标字段至csv文件，存放csv文件的目录树和存放pcap文件的相同
-    bat_file = open('pcap_to_csv_bat_generator.bat', 'w')
+    bat_file = open('pcap_to_csv.bat', 'w')
     bat_file.write('@echo off')
     bat_file.write('\n')
     goods = os.listdir('data_pcap/')
