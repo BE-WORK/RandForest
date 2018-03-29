@@ -13,9 +13,9 @@ def extract_packet_length(csv_file, is_train_data):
     :return:none
     """
     if is_train_data:
-        length_file = file('train.csv', 'a')
+        length_file = file('tmp/train.csv', 'a')
     else:
-        length_file = file('test.csv', 'a')
+        length_file = file('tmp/test.csv', 'a')
 
     file_obj = file(csv_file, 'rb')
     csv_reader = csv.reader(file_obj)
@@ -75,17 +75,17 @@ def extract_length_feature():
     :return: none
     """
     # 处理训练集
-    if os.path.exists('train.csv'):  # 先清除之前的数据
-        os.remove('train.csv')
-    path_train = 'data_train'
+    if os.path.exists('tmp/train.csv'):  # 先清除之前的数据
+        os.remove('tmp/train.csv')
+    path_train = 'tmp/data_train'
     files_of_train = os.listdir(path_train)
     for file_train in files_of_train:
         extract_packet_length(path_train + '/' + file_train, True)
 
     # 处理测试集
-    if os.path.exists('test.csv'):
-        os.remove('test.csv')
-    path_test = 'data_test'
+    if os.path.exists('tmp/test.csv'):
+        os.remove('tmp/test.csv')
+    path_test = 'tmp/data_test'
     files_of_test = os.listdir(path_test)
     for file_test in files_of_test:
         extract_packet_length(path_test + '/' + file_test, False)

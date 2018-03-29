@@ -11,9 +11,9 @@ def select_test_set(k, partition_num):
     :param partition_num: 第partition_num个数据子集，用于测试。
     :return: none
     """
-    path_train = r'data_train'  # 训练集所在路径
-    path_test = r'data_test'  # 测试集所在路径
-    path_data = r'tmp/cross_validation_' + str(k)  # 划分子集所在路径
+    path_train = 'tmp/data_train'  # 训练集所在路径
+    path_test = 'tmp/data_test'  # 测试集所在路径
+    path_data = 'tmp/cross_validation_' + str(k)  # 划分子集所在路径
 
     if os.path.exists(path_train):  # 如果存在，先清除数据
         shutil.rmtree(path_train)

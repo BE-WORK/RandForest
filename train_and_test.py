@@ -11,7 +11,7 @@ def train_model():
     :return: 返回训练好的分类器。
     """
     # 加载训练数据
-    csv_read_file = file('features-train.csv', 'rb')
+    csv_read_file = file('tmp/features-train.csv', 'rb')
     csv_reader = csv.reader(csv_read_file)
     train_matrix = []
     train_label = []
@@ -26,8 +26,9 @@ def train_model():
     clf = RandomForestClassifier()  # criterion='gini',max_features='sqrt',n_estimators=3
     clf.fit(train_matrix, train_label)
     end_train = datetime.datetime.now()
-    output_train_cost = file('time-cost.txt', 'a')
-    output_train_cost.write('Train time duration: ' + str(end_train - start_train) + '\n')
+    print 'Train: ' + '{value:f}'.format(value=(end_train - start_train).total_seconds())
+    output_train_cost = file('tmp/time_cost.csv', 'a')
+    output_train_cost.write('Train' + ',' + '{value:f}'.format(value=(end_train - start_train).total_seconds()) + '\n')
     output_train_cost.close()
 
     return clf
@@ -40,7 +41,7 @@ def test_model(classifier):
     :return:none
     """
     # 加载测试数据
-    csv_read_file = file('features-test.csv', 'rb')
+    csv_read_file = file('tmp/features-test.csv', 'rb')
     csv_reader = csv.reader(csv_read_file)
     test_matrix = []
     test_label = []
@@ -55,14 +56,16 @@ def test_model(classifier):
     res = classifier.predict(test_matrix)
     end_test = datetime.datetime.now()
 
-    csv_write_file = file('result.csv', 'wb')
+    csv_write_file = file('tmp/result.csv', 'wb')
     fieldnames = ['trueResult', 'identifyResult']
-    writer = csv.DictWriter(csv_write_file, delimiter='\t', fieldnames=fieldnames)
+    writer = csv.DictWriter(csv_write_file, delimiter=',', fieldnames=fieldnames)
     for i in range(len(res)):
         writer.writerow({'trueResult': test_label[i], 'identifyResult': res[i]})
     csv_write_file.close()
-    output_test_test = file('time-cost.txt', 'a')
-    output_test_test.write('Test time duration: ' + str(end_test - start_test) + '\n')
+    output_test_test = file('tmp/time_cost.csv', 'a')
+    print 'Test: ' + '{value:f}'.format(value=(end_test - start_test).total_seconds() / len(test_label))
+    output_test_test.write(
+        'Test' + ',' + '{value:f}'.format(value=(end_test - start_test).total_seconds() / len(test_label)) + '\n')
     output_test_test.close()
 
 

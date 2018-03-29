@@ -1,9 +1,8 @@
 #忽略文件夹
 /data_pcap/*
 /data_csv/*
-/data_train/*
-/data_test/*
 /tmp/*
+/result/*
 
 #忽略Vim交换文件
 *.swp
@@ -13,9 +12,3 @@
 
 #忽略Python编译文件
 *.pyc
-
-#忽略.csv文件
-*.csv
-
-#忽略.txt文件
-*.txt

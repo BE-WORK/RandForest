@@ -122,9 +122,9 @@ def statistic_features():
     :return: none
     """
     # 处理训练集
-    file_obj = file("train.csv", 'rb')
+    file_obj = file('tmp/train.csv', 'rb')
     csv_reader = csv.reader(file_obj)
-    features_file_train = file("features-train.csv", 'w')
+    features_file_train = file('tmp/features-train.csv', 'w')
     cnt = 0  # 文件中每4行代表一个网页
     flows = []
     for order in csv_reader:
@@ -144,9 +144,9 @@ def statistic_features():
     features_file_train.close()
 
     # 处理测试集
-    file_obj = file("test.csv", 'rb')
+    file_obj = file('tmp/test.csv', 'rb')
     csv_reader = csv.reader(file_obj)
-    features_file_test = file("features-test.csv", 'w')
+    features_file_test = file('tmp/features-test.csv', 'w')
     cnt = 0  # 文件中每4行代表一个网页
     flows = []
     for order in csv_reader:
@@ -172,5 +172,5 @@ def main():
     print 'Calculating finished.'
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
