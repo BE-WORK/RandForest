@@ -35,7 +35,7 @@ def main():
     # 计算平均准确率
     with open('tmp/recall_precision_accuracy.csv') as file_accuracy:
         lines = [line for line in file_accuracy if re.search('accuracy', line)]  # 筛选出所有记录accuracy的行
-    accuracies = [float(item.split(',')[3]) for item in lines]  # 筛选出所有的accuracy值
+    accuracies = [float(item.split(',')[6]) for item in lines]  # 筛选出所有的accuracy值
     sum_accuracies = 0.0
     for accuracy in accuracies:
         sum_accuracies += accuracy
