@@ -9,9 +9,13 @@ import calculate_recall_precision_accuracy
 import os
 import shutil
 import re
+import datetime
 
 
 def main():
+    start = datetime.datetime.now()
+    print 'Start: ' + start.date() + ', ' + start.time()
+
     # 先清除之前的数据
     if os.path.exists('tmp'):
         shutil.rmtree('tmp')
@@ -72,6 +76,9 @@ def main():
     # 清除临时数据
     # if os.path.exists(r'tmp'):
     #     os.removedirs(r'tmp')
+
+    end = datetime.datetime.now()
+    print 'End: ' + end.date() + ', ' + end.time()
 
 
 if __name__ == '__main__':
