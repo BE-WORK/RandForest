@@ -14,7 +14,7 @@ import datetime
 
 def main():
     start = datetime.datetime.now()
-    print 'Start: ' + start.date() + ', ' + start.time()
+    print 'Start: ' + start.strftime('%Y-%m-%d, %H:%M:%S.%f')
 
     # 先清除之前的数据
     if os.path.exists('tmp'):
@@ -78,7 +78,8 @@ def main():
     #     os.removedirs(r'tmp')
 
     end = datetime.datetime.now()
-    print 'End: ' + end.date() + ', ' + end.time()
+    print 'End: ' + end.strftime('%Y-%m-%d, %H:%M:%S.%f')
+    print 'Time duration: ' + str(end - start)
 
 
 if __name__ == '__main__':
