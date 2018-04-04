@@ -101,21 +101,6 @@ def calculate_statistic_features(incomes, outgoes, bidirections):
     return result
 
 
-def max_min_transform(features):
-    """
-    此函数将传入的统计量列表中的数据归一化至（0，1）范围内。
-    :param features: 统计量列表。
-    :return: none
-    """
-    features = np.array(features).reshape(-1, 1)
-    np.nan_to_num(features)  # 转换NaN类型为0，无穷大为最大数（最小数）
-    # print features
-    min_max_scaler = preprocessing.MinMaxScaler()
-    feature_minmax = min_max_scaler.fit_transform(features)  # 将特征值映射到范围(0,1)上
-    np.nan_to_num(feature_minmax)  # transform nan
-    return np.array(feature_minmax).reshape(1, -1)
-
-
 def statistic_features():
     """
     此函数分别为训练集和测试集计算所有流量文件的统计量。
@@ -133,9 +118,9 @@ def statistic_features():
         flows.append(''.join(order[:]))
         cnt = cnt + 1
         if cnt == 4:  # 一个网页的完整数据已读入
-            feature = calculate_statistic_features(flows[0], flows[1], flows[2])
-            res = max_min_transform(feature)
-            for i in res[0]:
+            features = calculate_statistic_features(flows[0], flows[1], flows[2])
+            # res = max_min_transform(feature)
+            for i in features:
                 features_file_train.write(str(i) + ',')
             features_file_train.write(flows[3] + '\n')
             flows = []
@@ -155,15 +140,47 @@ def statistic_features():
         flows.append(''.join(order[:]))
         cnt = cnt + 1
         if cnt == 4:
-            feature = calculate_statistic_features(flows[0], flows[1], flows[2])
-            res = max_min_transform(feature)
-            for i in res[0]:
+            features = calculate_statistic_features(flows[0], flows[1], flows[2])
+            # res = max_min_transform(feature)
+            for i in features:
                 features_file_test.write(str(i) + ',')
             features_file_test.write(flows[3] + '\n')
             flows = []
             cnt = 0
     file_obj.close()
     features_file_test.close()
+
+    # 归一化统计量
+    with open('tmp/features-train.csv', 'rb') as file_obj:  # 读取训练集统计量
+        train_set = []
+        train_label = []
+        csv_reader = csv.reader(file_obj)
+        for exampler in csv_reader:
+            train_set.append(exampler[:-1])
+            train_label.append(exampler[-1])
+    with open('tmp/features-test.csv', 'rb') as file_obj:  # 读取测试集统计量
+        test_set = []
+        test_label = []
+        csv_reader = csv.reader(file_obj)
+        for exampler in csv_reader:
+            test_set.append(exampler[:-1])
+            test_label.append(exampler[-1])
+
+    # Standardization: zero mean and unit variance
+    scaler = preprocessing.StandardScaler().fit(np.array(train_set, dtype=float))  # 实例化一个缩放器，让其拟合训练集数据
+    train_set_scaled = scaler.transform(train_set)
+    train_set_scaled = train_set_scaled.tolist()
+    test_set_scaled = scaler.transform(test_set)
+    test_set_scaled = test_set_scaled.tolist()
+
+    with open('tmp/scaled-features-train.csv', 'wb') as file_obj:
+        csv_writer = csv.writer(file_obj)
+        for i, feature in enumerate(train_set_scaled):
+            csv_writer.writerow(feature + [train_label[i]])
+    with open('tmp/scaled-features-test.csv', 'wb') as file_obj:
+        csv_writer = csv.writer(file_obj)
+        for i, feature in enumerate(test_set_scaled):
+            csv_writer.writerow(feature + [test_label[i]])
 
 
 def main():
