@@ -9,7 +9,6 @@ def calculate_recall_precision_accuracy():
     :return: none
     """
     num_true_positive = {}  # 记录每个网页的真阳例数目
-    num_false_negtive = {}  # 记录每个网页的真阴例数目
     num_test_sample = {}  # 记录每个网页真实存在的样本数
     num_prediction = {}  # 记录所有分类为当前网页的样本数
 
@@ -47,7 +46,6 @@ def calculate_recall_precision_accuracy():
         if true_page_name not in num_test_sample:
             num_test_sample[true_page_name] = 0
             num_true_positive[true_page_name] = 0
-            num_false_negtive[true_page_name] = 0
 
         if true_page_name not in num_prediction:
             num_prediction[true_page_name] = 0
@@ -66,11 +64,6 @@ def calculate_recall_precision_accuracy():
 
     accuracy = total_true_positive * 1.0 / total_sample
 
-    for page1 in num_false_negtive:  # 计算每个网页的真阴例数目
-        for page2 in num_true_positive:
-            if page2 != page1:
-                num_false_negtive[page1] += num_true_positive[page2]
-
     for key in num_test_sample:
         page_true_positive_ratio[key] = 1.0 * num_true_positive[key] / num_test_sample[
             key]  # 计算真阳率：被预测为正的正样本数/正样本实际数（TPR=TP/TP+FN）
@@ -82,7 +75,7 @@ def calculate_recall_precision_accuracy():
         page_recall = 1.0 * num_true_positive[key] / num_test_sample[key]
 
         page_false_positive_ratio[key] = 1.0 * (num_prediction[key] - num_true_positive[key]) / (
-                num_prediction[key] + num_false_negtive[key])  # 计算假阳率：被预测为正的负样本数/负样本实际数（FPR=FP/FP+TN）
+                total_sample - num_test_sample[key])  # 计算假阳率：被预测为正的负样本数/负样本实际数（FPR=FP/FP+TN）
         weight[key] = 1.0 * num_test_sample[key] / total_sample
         writer.writerow(
             {'page_name': key,
