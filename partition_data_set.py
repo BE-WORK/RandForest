@@ -5,15 +5,16 @@ import shutil
 import random
 
 
-def partition_data_set(k, n):
+def partition_data_set(path_root, k, n):
     """
     此函数将数据集随机划分成n等份。
+    :param path_root: 数据集所在的根目录。
     :param k: 数据集的第k次划分。
     :param n: 将数据集划分成n等份。
     :return: none
     """
-    path_data_set = 'data_csv'  # 数据集存放的路径
-    path_tmp = 'tmp'  # 存放临时文件的路径
+    path_data_set = path_root + '/data_csv'  # 数据集存放的路径
+    path_tmp = path_root + '/tmp'  # 存放临时文件的路径
     if not os.path.exists(path_tmp):
         os.mkdir(path_tmp)
     if not os.path.exists(path_tmp + '/cross_validation_' + str(k)):  # 判断路径“tmp/cross_validation_k”是否存在
@@ -42,7 +43,13 @@ def partition_data_set(k, n):
 
 
 def main():
-    partition_data_set(1, 5)
+    path = raw_input('Enter the root path of your data: ')
+    if path.find('\\'):
+        path = path.replace('\\', '/')
+    if path == '':
+        partition_data_set(path_root='C:/ScriptData/RandForest', k=1, n=5)
+    else:
+        partition_data_set(path_root=path)
 
 
 if __name__ == '__main__':

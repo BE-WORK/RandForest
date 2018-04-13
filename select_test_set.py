@@ -4,16 +4,17 @@ import os
 import shutil
 
 
-def select_test_set(k, partition_num):
+def select_test_set(path_root, k, partition_num):
     """
     此函数在n个子集中选出1个测试集，剩余作为训练集，并将数据拷贝至相应位置。
+    :param path_root: 数据集所在的路径。
     :param k: 第k次数据集划分，即第k此交叉验证。
     :param partition_num: 第partition_num个数据子集，用于测试。
     :return: none
     """
-    path_train = 'tmp/data_train'  # 训练集所在路径
-    path_test = 'tmp/data_test'  # 测试集所在路径
-    path_data = 'tmp/cross_validation_' + str(k)  # 划分子集所在路径
+    path_train = path_root + '/tmp/data_train'  # 训练集所在路径
+    path_test = path_root + '/tmp/data_test'  # 测试集所在路径
+    path_data = path_root + '/tmp/cross_validation_' + str(k)  # 划分子集所在路径
 
     if os.path.exists(path_train):  # 如果存在，先清除数据
         shutil.rmtree(path_train)
@@ -39,7 +40,13 @@ def select_test_set(k, partition_num):
 
 
 def main():
-    select_test_set(1, 1)
+    path = raw_input('Enter the root path of your data: ')
+    if path.find('\\'):  # 转换路径格式
+        path = path.replace('\\', '/')
+    if path == '':
+        select_test_set(path_root='C:/ScriptData/RandForest', k=1, partition_num=1)
+    else:
+        select_test_set(path_root=path, k=1, partition_num=1)
 
 
 if __name__ == '__main__':

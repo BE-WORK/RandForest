@@ -5,17 +5,19 @@ import os
 import csv
 
 
-def extract_packet_length(csv_file, is_train_data):
+def extract_packet_length(path_root, csv_file, is_train_data):
     """
     此函数处理单个传入的csv文件，抽取数据包Length字段。
+    :param path_root:数据集所在的根目录。
     :param csv_file: 传入的csv文件路径。
     :param is_train_data: 传入的标示，用于判断当前处理的是训练集数据还是测试集数据。
     :return:none
     """
+    path_length_file = path_root + '/tmp'
     if is_train_data:
-        length_file = file('tmp/train.csv', 'a')
+        length_file = file(path_length_file + '/train.csv', 'a')
     else:
-        length_file = file('tmp/test.csv', 'a')
+        length_file = file(path_length_file + '/test.csv', 'a')
 
     file_obj = file(csv_file, 'rb')
     csv_reader = csv.reader(file_obj)
@@ -68,30 +70,42 @@ def extract_packet_length(csv_file, is_train_data):
     length_file.close()
 
 
-def extract_length_feature():
+def extract_length_feature(path_root):
     """
     此函数分别为训练集和测试集数据抽取数据包Length字段。
+    :param path_root: 数据集所在的根目录。
     :return: none
     """
+    path_train_features = path_root + '/tmp/train.csv'
+    path_test_features = path_root + '/tmp/test.csv'
+    path_train = path_root + '/tmp/data_train'
+    path_test = path_root + '/tmp/data_test'
+
     # 处理训练集
-    if os.path.exists('tmp/train.csv'):  # 先清除之前的数据
-        os.remove('tmp/train.csv')
-    path_train = 'tmp/data_train'
+    if os.path.exists(path_train_features):  # 先清除之前的数据
+        os.remove(path_train_features)
+
     files_of_train = os.listdir(path_train)
     for file_train in files_of_train:
-        extract_packet_length(path_train + '/' + file_train, True)
+        extract_packet_length(path_root, path_train + '/' + file_train, True)
 
     # 处理测试集
-    if os.path.exists('tmp/test.csv'):
-        os.remove('tmp/test.csv')
-    path_test = 'tmp/data_test'
+    if os.path.exists(path_test_features):  # 先清除之前的数据
+        os.remove(path_test_features)
+
     files_of_test = os.listdir(path_test)
     for file_test in files_of_test:
-        extract_packet_length(path_test + '/' + file_test, False)
+        extract_packet_length(path_root, path_test + '/' + file_test, False)
 
 
 def main():
-    extract_length_feature()
+    path = raw_input('Enter the root path of your data: ')
+    if path.find('\\'):  # 转换路径格式
+        path = path.replace('\\', '/')
+    if path == '':
+        extract_length_feature(path_root='C:/ScriptData/RandForest')
+    else:
+        extract_length_feature(path_root=path)
 
 
 if __name__ == '__main__':
