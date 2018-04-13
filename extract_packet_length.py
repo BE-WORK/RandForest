@@ -27,7 +27,7 @@ def extract_packet_length(csv_file, is_train_data):
     bidirectional = []
 
     ipv4 = '172.29.23.168'  # 我电脑的ipv4地址
-    for order, date, src, dst, pro, length, content in csv_reader:
+    for order, date, src, dst, pro, length in csv_reader:
         if dst.find(ipv4) != -1:
             incoming.append(length)
         if src.find(ipv4) != -1:

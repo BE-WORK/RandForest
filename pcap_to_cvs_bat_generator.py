@@ -27,7 +27,7 @@ def pcap_to_csv_bat_generator():
             fetchs = os.listdir('data_pcap/' + g + '/' + p + '/')
             for f in fetchs:  # 遍历每一个网页的多次获取产生的文件
                 bat_file.write(
-                    'tshark -r data_pcap/' + g + '/' + p + '/' + f + ' -Y "tcp && ip" -T fields -e _ws.col.No. -e _ws.col.Time -e _ws.col.Source -e _ws.col.Destination -e _ws.col.Protocol -e _ws.col.Length -e _ws.col.Info -E header=n -E separator=, -E quote=d -E occurrence=f > data_csv/' + g + '/' + p + '/' + '-'.join(
+                    'tshark -r data_pcap/' + g + '/' + p + '/' + f + ' -Y "tcp && ip" -T fields -e _ws.col.No. -e _ws.col.Time -e _ws.col.Source -e _ws.col.Destination -e _ws.col.Protocol -e _ws.col.Length -E header=n -E separator=, -E quote=d -E occurrence=f > data_csv/' + g + '/' + p + '/' + '-'.join(
                         f.split('.')[:-1]) + '.csv')
                 bat_file.write('\n')
                 # bat_file.write('pause')
