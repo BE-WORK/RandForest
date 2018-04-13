@@ -14,90 +14,40 @@ def calculate_statistic_features(incomes, outgoes, bidirections):
     :param bidirections: 存放双向数据包Length字段列表。
     :return:none
     """
-    incomes = incomes.split(' ')
     if len(incomes) == 1 or len(incomes) == 0:
         incomes = [0, 0, 0]
     if len(outgoes) == 1 or len(outgoes) == 0:
         outgoes = [0, 0, 0]
     if len(bidirections) == 1 or len(bidirections) == 0:
         bidirections = [0, 0, 0]
+    hist = {}
+    incomes = incomes.split(' ')
     incomes = map(int, incomes[:-1])  # 最后一个元素是空字符串:''
-    df = DataFrame(incomes)
-    percentiles = []  # list of percentiles
-    minimum = df.min()  # minimum，返回的是Series类型
-    maximum = df.max()  # maximum
-    mean = df.mean()  # mean
-    mad = df.mad()  # median absolute deviation
-    std = df.std()  # standard deviation
-    var = df.var()  # variance
-    skew = df.skew()  # skew
-    kurt = df.kurt()  # kurtosis
-    if np.isnan(std[0]):
-        std[0] = 0.0
-    if np.isnan(var[0]):
-        var[0] = 0.0
-    if np.isnan(skew[0]):
-        skew[0] = 0.0
-    if np.isnan(kurt[0]):
-        kurt[0] = 0.0
-    for i in range(10, 100, 10):
-        percentiles.append(np.percentile(incomes, i))
-    result = [minimum[0], maximum[0], mean[0], mad[0], std[0], var[0], skew[0], kurt[0],
-              len(incomes) + len(outgoes) + len(bidirections)] + percentiles
-    del percentiles[:]
+    hist['incomes'] = {}
+    for i in range(54, 1515):
+        hist['incomes'][i] = 0
+    for income in incomes:
+        hist['incomes'][income] += 1
+    result = hist['incomes'].values()
 
     outgoes = outgoes.split(' ')
     outgoes = map(int, outgoes[:-1])
-    df = DataFrame(outgoes)
-    percentiles = []  # list of percentiles
-    minimum = df.min()  # minimum
-    maximum = df.max()  # maximum
-    mean = df.mean()  # mean
-    mad = df.mad()  # median absolute deviation
-    std = df.std()  # standard deviation
-    var = df.var()  # variance
-    skew = df.skew()  # skew
-    kurt = df.kurt()  # kurtosis
-    if np.isnan(std[0]):
-        std[0] = 0.0
-    if np.isnan(var[0]):
-        var[0] = 0.0
-    if np.isnan(skew[0]):
-        skew[0] = 0.0
-    if np.isnan(kurt[0]):
-        kurt[0] = 0.0
-
-    for i in range(10, 100, 10):
-        percentiles.append(np.percentile(outgoes, i))
-    result = result + [minimum[0], maximum[0], mean[0], mad[0], std[0], var[0], skew[0], kurt[0],
-                       len(incomes) + len(outgoes) + len(bidirections)] + percentiles
-    del percentiles[:]
+    hist['outgoes'] = {}
+    for i in range(54, 1515):
+        hist['outgoes'][i] = 0
+    for outgo in outgoes:
+        hist['outgoes'][outgo] += 1
+    result += hist['outgoes'].values()
 
     bidirections = bidirections.split(' ')
     bidirections = map(int, bidirections[:-1])
-    df = DataFrame(bidirections)
-    percentiles = []  # list of percentiles
-    minimum = df.min()  # minimum
-    maximum = df.max()  # maximum
-    mean = df.mean()  # mean
-    mad = df.mad()  # median absolute deviation
-    std = df.std()  # standard deviation
-    var = df.var()  # variance
-    skew = df.skew()  # skew
-    kurt = df.kurt()  # kurtosis
-    if np.isnan(std[0]):
-        std[0] = 0.0
-    if np.isnan(var[0]):
-        var[0] = 0.0
-    if np.isnan(skew[0]):
-        skew[0] = 0.0
-    if np.isnan(kurt[0]):
-        kurt[0] = 0.0
-    for i in range(10, 100, 10):
-        percentiles.append(np.percentile(bidirections, i))
-    result = result + [minimum[0], maximum[0], mean[0], mad[0], std[0], var[0], skew[0], kurt[0],
-                       len(incomes) + len(outgoes) + len(bidirections)] + percentiles
-    del percentiles[:]
+    hist['bidirections'] = {}
+    for i in range(54, 1515):
+        hist['bidirections'][i] = 0
+    for key in hist['incomes']:
+        hist['bidirections'][key] = hist['incomes'][key] + hist['outgoes'][key]
+    result += hist['bidirections'].values()
+
     return result
 
 
@@ -119,7 +69,6 @@ def statistic_features():
         cnt = cnt + 1
         if cnt == 4:  # 一个网页的完整数据已读入
             features = calculate_statistic_features(flows[0], flows[1], flows[2])
-            # res = max_min_transform(feature)
             for i in features:
                 features_file_train.write(str(i) + ',')
             features_file_train.write(flows[3] + '\n')
@@ -167,7 +116,8 @@ def statistic_features():
             test_label.append(exampler[-1])
 
     # Standardization: zero mean and unit variance
-    scaler = preprocessing.StandardScaler().fit(np.array(train_set, dtype=float))  # 实例化一个缩放器，让其拟合训练集数据
+    # scaler = preprocessing.StandardScaler().fit(np.array(train_set, dtype=float))  # 实例化一个缩放器，让其拟合训练集数据
+    scaler = preprocessing.MinMaxScaler().fit(np.array(train_set, dtype=float))
     train_set_scaled = scaler.transform(train_set)
     train_set_scaled = train_set_scaled.tolist()
     test_set_scaled = scaler.transform(test_set)
