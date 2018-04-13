@@ -2,7 +2,6 @@
 
 import csv
 import numpy as np
-from pandas import DataFrame
 from sklearn import preprocessing
 
 
@@ -65,67 +64,60 @@ def statistic_features(path_root):
     path_test_features_scaled = path_root + '/tmp/test_features_scaled.csv'
 
     # 处理训练集
+    train_set = []
+    train_label = []
     with open(path_train, 'rb') as file_obj:
         csv_reader = csv.reader(file_obj)
-        with open(path_train_features, 'w') as features_file_train:
-            cnt = 0  # 文件中每4行代表一个网页
-            flows = []
-            for order in csv_reader:
-                if order[-1] == '':  # 由于之前写入数据的方式原因，需要检验最后一列是否为空
-                    order.pop()
-                flows.append(''.join(order[:]))
-                cnt = cnt + 1
-                if cnt == 4:  # 一个网页的完整数据已读入
-                    features = calculate_statistic_features(flows[0], flows[1], flows[2])
-                    for i in features:
-                        features_file_train.write(str(i) + ',')
-                    features_file_train.write(flows[3] + '\n')
-                    flows = []
-                    cnt = 0
+        cnt = 0  # 文件中每4行代表一个网页
+        flows = []
+        for order in csv_reader:
+            if order[-1] == '':  # 由于之前写入数据的方式原因，需要检验最后一列是否为空
+                order.pop()
+            flows.append(''.join(order[:]))
+            cnt = cnt + 1
+            if cnt == 4:  # 一个网页的完整数据已读入
+                features = calculate_statistic_features(flows[0], flows[1], flows[2])
+                train_set.append(features)
+                train_label.append(flows[3])
+                flows = []
+                cnt = 0
 
     # 处理测试集
+    test_set = []
+    test_label = []
     with open(path_test, 'rb') as file_obj:
         csv_reader = csv.reader(file_obj)
-        with open(path_test_features, 'w') as features_file_test:
-            cnt = 0  # 文件中每4行代表一个网页
-            flows = []
-            for order in csv_reader:
-                if order[-1] == '':  # 由于之前写入数据的方式原因，需要检验最后一列是否为空
-                    order.pop()
-                flows.append(''.join(order[:]))
-                cnt = cnt + 1
-                if cnt == 4:
-                    features = calculate_statistic_features(flows[0], flows[1], flows[2])
-                    for i in features:
-                        features_file_test.write(str(i) + ',')
-                    features_file_test.write(flows[3] + '\n')
-                    flows = []
-                    cnt = 0
+        cnt = 0  # 文件中每4行代表一个网页
+        flows = []
+        for order in csv_reader:
+            if order[-1] == '':  # 由于之前写入数据的方式原因，需要检验最后一列是否为空
+                order.pop()
+            flows.append(''.join(order[:]))
+            cnt = cnt + 1
+            if cnt == 4:
+                features = calculate_statistic_features(flows[0], flows[1], flows[2])
+                test_set.append(features)
+                test_label.append(flows[3])
+                flows = []
+                cnt = 0
 
-    # 归一化统计量
-    with open(path_train_features, 'rb') as file_obj:  # 读取训练集统计量
-        train_set = []
-        train_label = []
-        csv_reader = csv.reader(file_obj)
-        for exampler in csv_reader:
-            train_set.append(exampler[:-1])
-            train_label.append(exampler[-1])
-    with open(path_test_features, 'rb') as file_obj:  # 读取测试集统计量
-        test_set = []
-        test_label = []
-        csv_reader = csv.reader(file_obj)
-        for exampler in csv_reader:
-            test_set.append(exampler[:-1])
-            test_label.append(exampler[-1])
+    # 标准化之前写入文件
+    with open(path_train_features, 'wb') as train_features_file:
+        csv_writer = csv.writer(train_features_file)
+        for i, train_features in enumerate(train_set):
+            csv_writer.writerow(train_features + [train_label[i]])
 
-    # Standardization: zero mean and unit variance
-    # scaler = preprocessing.StandardScaler().fit(np.array(train_set, dtype=float))
+    with open(path_test_features, 'wb')as test_features_file:
+        csv_writer = csv.writer(test_features_file)
+        for i, test_features in enumerate(test_set):
+            csv_writer.writerow(test_features + [test_label[i]])
 
-    #  实例化一个缩放器，让其拟合训练集数据
+    # 标准化
     scaler = preprocessing.MinMaxScaler()
     train_set_scaled = scaler.fit_transform(np.array(train_set, dtype=float)).tolist()
     test_set_scaled = scaler.transform(test_set).tolist()
 
+    # 标准化之后写入文件
     with open(path_train_features_scaled, 'wb') as file_obj:
         csv_writer = csv.writer(file_obj)
         for i, feature in enumerate(train_set_scaled):
