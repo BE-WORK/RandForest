@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import partition_data_set
-import select_test_set
 import extract_packet_length
 import calculate_statistic_features
 import train_and_test
@@ -35,10 +34,9 @@ def main():
     k = 1  # 进行5次交叉验证
     n = 5  # 5-折
     for i in range(1, k + 1):
-        partition_data_set.partition_data_set(path_root=path_root, k=i, n=n)
+        partition_data_set.partition_data_set(path_root=path_root, k=i)
         for j in range(1, n + 1):
-            select_test_set.select_test_set(path_root=path_root, k=i, partition_num=j)
-            extract_packet_length.extract_length_feature(path_root=path_root)
+            extract_packet_length.extract_length_feature(path_root=path_root, k=i, partition_num=j)
             calculate_statistic_features.statistic_features(path_root=path_root)
             classifier = train_and_test.train_model(path_root=path_root)
             train_and_test.test_model(path_root=path_root, classifier=classifier)
