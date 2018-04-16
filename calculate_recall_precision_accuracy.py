@@ -98,12 +98,11 @@ def calculate_recall_precision_accuracy(path_root):
 
 def main():
     path = raw_input('Enter the root path of your data: ')
-    if path.find('\\'):  # 转换路径格式
+    if '' == path:
+        path = 'C:/ScriptData/RandForest'
+    elif path.find('\\') != -1:  # 转换路径格式
         path = path.replace('\\', '/')
-    if path == '':
-        calculate_recall_precision_accuracy(path_root='C:/ScriptData/RandForest')
-    else:
-        calculate_recall_precision_accuracy(path_root=path)
+    calculate_recall_precision_accuracy(path_root=path)
 
 
 if __name__ == '__main__':

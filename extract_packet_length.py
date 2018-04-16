@@ -90,17 +90,13 @@ def extract_length_feature(path_root, k, partition_num):
     test_set = []  # 标记测试集
     with open(path_cv_k, 'rb') as split_file:
         csv_reader = csv.reader(split_file)
-        for partition, f1, f2, f3, f4 in csv_reader:
-            if partition_num == int(partition[-1]):
-                test_set.append(f1)
-                test_set.append(f2)
-                test_set.append(f3)
-                test_set.append(f4)
+        for line in csv_reader:
+            if partition_num == int(line[0][-1]):
+                for f in line[1:]:
+                    test_set.append(f)
             else:
-                train_set.append(f1)
-                train_set.append(f2)
-                train_set.append(f3)
-                train_set.append(f4)
+                for f in line[1:]:
+                    train_set.append(f)
 
     goods = os.listdir(path_csv)
     for g in goods:
@@ -117,12 +113,11 @@ def extract_length_feature(path_root, k, partition_num):
 
 def main():
     path = raw_input('Enter the root path of your data: ')
-    if path.find('\\'):  # 转换路径格式
+    if '' == path:
+        path = 'C:/ScriptData/RandForest'
+    elif path.find('\\') != -1:  # 转换路径格式
         path = path.replace('\\', '/')
-    if path == '':
-        extract_length_feature(path_root='C:/ScriptData/RandForest', k=1, partition_num=1)
-    else:
-        extract_length_feature(path_root=path, k=1, partition_num=1)
+    extract_length_feature(path_root=path, k=1, partition_num=1)
 
 
 if __name__ == '__main__':

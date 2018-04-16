@@ -13,11 +13,10 @@ import datetime
 
 def main():
     path_root = raw_input('Enter the root path of your data: ')
-    if path_root.find('\\'):  # 转换路径格式
-        path_root = path_root.replace('\\', '/')
-
-    if path_root == '':  # 如果输入为空，则使用默认路径
+    if '' == path_root:
         path_root = 'C:/ScriptData/RandForest'
+    elif path_root.find('\\') != -1:  # 转换路径格式
+        path_root = path_root.replace('\\', '/')
 
     path_average_result = path_root + '/result'  # 存放最终结果的文件夹
     path_tmp = path_root + '/tmp'
@@ -33,8 +32,9 @@ def main():
 
     k = 1  # 进行5次交叉验证
     n = 5  # 5-折
+    n_instance = 30  # 每个网页的示例数
     for i in range(1, k + 1):
-        partition_data_set.partition_data_set(path_root=path_root, k=i)
+        partition_data_set.partition_data_set(path_root=path_root, n_instance=n_instance, k=i, n=n)
         for j in range(1, n + 1):
             extract_packet_length.extract_length_feature(path_root=path_root, k=i, partition_num=j)
             calculate_statistic_features.statistic_features(path_root=path_root)

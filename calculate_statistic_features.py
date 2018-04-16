@@ -130,13 +130,12 @@ def statistic_features(path_root):
 
 def main():
     path = raw_input('Enter the root path of your data: ')
-    if path.find('\\'):  # 转换路径格式
+    if '' == path:
+        path = 'C:/ScriptData/RandForest'
+    elif path.find('\\') != -1:  # 转换路径格式
         path = path.replace('\\', '/')
     print 'Starting to calculate statistic features for train and test set...'
-    if path == '':
-        statistic_features(path_root='C:/ScriptData/RandForest')
-    else:
-        statistic_features(path_root=path)
+    statistic_features(path_root=path)
     print 'Calculating finished.'
 
 

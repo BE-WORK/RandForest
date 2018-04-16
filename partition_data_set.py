@@ -5,7 +5,7 @@ import random
 import csv
 
 
-def partition_data_set(path_root, k):
+def partition_data_set(path_root, n_instance, k, n):
     """
     此函数将数据集随机划分成n等份，仅将划分规则写入文件，并无实质的文件移动。
     :param path_root: 数据集所在的根目录。
@@ -16,21 +16,24 @@ def partition_data_set(path_root, k):
     if not os.path.exists(path_tmp):
         os.mkdir(path_tmp)
 
-    marks = random.sample(xrange(1, 21), 20)  # 子集划分标记
+    marks = random.sample(xrange(1, n_instance + 1), n_instance)  # 子集划分标记
     with open(path_tmp + '/cross_validation_' + str(k) + '.csv', 'wb') as split_file:
         csv_writer = csv.writer(split_file)
-        for i in range(5):
-            csv_writer.writerow(['Partition_' + str(i + 1)] + marks[i * 4:i * 4 + 4])
+        subset_size = n_instance / n
+        for i in range(subset_size):
+            csv_writer.writerow(['Partition_' + str(i + 1)] + marks[i * subset_size:i * subset_size + subset_size])
 
 
 def main():
     path = raw_input('Enter the root path of your data: ')
-    if path.find('\\'):
+    if '' == path:
+        path = 'C:/ScriptData/RandForest'
+    elif path.find('\\') != -1:  # 转换路径格式
         path = path.replace('\\', '/')
-    if path == '':
-        partition_data_set(path_root='C:/ScriptData/RandForest', k=1)
-    else:
-        partition_data_set(path_root=path)
+    n_instance = raw_input('Enter the number of instances of a page: ')
+    if '' == n_instance:
+        n_instance = 20
+    partition_data_set(path_root=path, n_instance=n_instance, k=1, n=5)
 
 
 if __name__ == '__main__':

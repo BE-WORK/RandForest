@@ -79,14 +79,12 @@ def test_model(path_root, classifier):
 
 def main():
     path = raw_input('Enter the root path of your data: ')
-    if path.find('\\'):  # 转换路径格式
+    if '' == path:
+        path = 'C:/ScriptData/RandForest'
+    elif path.find('\\') != -1:  # 转换路径格式
         path = path.replace('\\', '/')
-    if path == '':
-        classifier = train_model(path_root='C:/ScriptData/RandForest')
-        test_model(path_root='C:/ScriptData/RandForest', classifier=classifier)
-    else:
-        classifier = train_model(path_root=path)
-        test_model(path_root=path, classifier=classifier)
+    classifier = train_model(path_root=path)
+    test_model(path_root=path, classifier=classifier)
 
 
 if __name__ == '__main__':

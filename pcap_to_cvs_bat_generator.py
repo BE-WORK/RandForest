@@ -41,12 +41,11 @@ def pcap_to_csv_bat_generator(path_root):
 
 def main():
     path = raw_input('Enter the root path of your data: ')
-    if path.find('\\'):  # 转换路径格式
+    if '' == path:
+        path = 'C:/ScriptData/RandForest'
+    elif path.find('\\') != -1:  # 转换路径格式
         path = path.replace('\\', '/')
-    if path == '':
-        pcap_to_csv_bat_generator(path_root='C:/ScriptData/RandForest')
-    else:
-        pcap_to_csv_bat_generator(path_root=path)
+    pcap_to_csv_bat_generator(path_root=path)
 
 
 if __name__ == '__main__':
