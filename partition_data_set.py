@@ -8,8 +8,10 @@ import csv
 def partition_data_set(path_root, n_instance, k, n):
     """
     此函数将数据集随机划分成n等份，仅将划分规则写入文件，并无实质的文件移动。
-    :param path_root: 数据集所在的根目录。
+    :param path_root:  数据集所在的根目录。
+    :param n_instance: 每个网页的实例数。
     :param k: 数据集的第k次划分。
+    :param n: 划分的子集数。
     :return: none
     """
     path_tmp = path_root + '/tmp'  # 存放临时文件的路径
