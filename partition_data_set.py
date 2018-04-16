@@ -20,7 +20,7 @@ def partition_data_set(path_root, n_instance, k, n):
     with open(path_tmp + '/cross_validation_' + str(k) + '.csv', 'wb') as split_file:
         csv_writer = csv.writer(split_file)
         subset_size = n_instance / n
-        for i in range(subset_size):
+        for i in range(n):
             csv_writer.writerow(['Partition_' + str(i + 1)] + marks[i * subset_size:i * subset_size + subset_size])
 
 
