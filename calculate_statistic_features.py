@@ -115,7 +115,7 @@ def statistic_features(path_root):
     # 标准化
     scaler = preprocessing.MinMaxScaler()
     train_set_scaled = scaler.fit_transform(np.array(train_set, dtype=float)).tolist()
-    test_set_scaled = scaler.transform(test_set).tolist()
+    test_set_scaled = scaler.transform(np.array(test_set, dtype=float)).tolist()
 
     # 标准化之后写入文件
     with open(path_train_features_scaled, 'wb') as file_obj:

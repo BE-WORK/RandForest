@@ -68,6 +68,8 @@ def calculate_recall_precision_accuracy(path_root):
 
         accuracy = total_true_positive * 1.0 / total_sample
 
+        precision = 0.0
+        recall = 0.0
         for key in num_test_sample:
             page_true_positive_ratio[key] = 1.0 * num_true_positive[key] / num_test_sample[
                 key]  # 计算真阳率：被预测为正的正样本数/正样本实际数（TPR=TP/TP+FN）
@@ -81,6 +83,10 @@ def calculate_recall_precision_accuracy(path_root):
             page_false_positive_ratio[key] = 1.0 * (num_prediction[key] - num_true_positive[key]) / (
                     total_sample - num_test_sample[key])  # 计算假阳率：被预测为正的负样本数/负样本实际数（FPR=FP/FP+TN）
             weight[key] = 1.0 * num_test_sample[key] / total_sample
+
+            precision += page_precision * weight[key]
+            recall += page_recall * weight[key]
+
             writer.writerow(
                 {'page_name': key,
                  'page_sample': num_test_sample[key],
@@ -92,7 +98,9 @@ def calculate_recall_precision_accuracy(path_root):
                  'recall': page_recall,
                  'page_weight': weight[key]})
         writer.writerow({'page_name': 'accuracy',
-                         'precision': accuracy})
+                         'page_truth': accuracy,
+                         'precision': precision,
+                         'recall': recall})
         writer.writerow({})
 
 

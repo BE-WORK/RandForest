@@ -7,8 +7,8 @@ import train_and_test
 import calculate_recall_precision_accuracy
 import os
 import shutil
-import re
 import datetime
+import csv
 
 
 def main():
@@ -48,15 +48,23 @@ def main():
 
     # 计算平均准确率
     with open(path_rec_pre_acc) as file_accuracy:
-        lines = [line for line in file_accuracy if re.search('accuracy', line)]  # 筛选出所有记录accuracy的行
-    accuracies = [float(item.split(',')[6]) for item in lines]  # 筛选出所有的accuracy值
-    sum_accuracies = 0.0
-    for accuracy in accuracies:
-        sum_accuracies += accuracy
-    average_accuracy = sum_accuracies / len(accuracies)
+        sum_accuracies = 0.0
+        sum_precisions = 0.0
+        sum_recalls = 0.0
+        csv_reader = csv.reader(file_accuracy)
+        for line in csv_reader:
+            if line[0] == 'accuracy':  # 只处理表示为'accuracy'的行
+                sum_accuracies += float(line[3])
+                sum_precisions += float(line[6])
+                sum_recalls += float(line[7])
+        average_accuracy = sum_accuracies / (k * n)
+        average_precision = sum_precisions / (k * n)
+        average_recall = sum_recalls / (k * n)
 
-    with open(path_average_result + '/average_accuracy.csv', 'a') as file_average_accuracy:  # 将accuracy均值写入文件
-        file_average_accuracy.write(str(average_accuracy) + '\n')
+    with open(path_average_result + '/average_accuracy_precision_recall.csv',
+              'a') as file_average_accuracy:  # 将accuracy均值写入文件
+        file_average_accuracy.write(
+            str(average_accuracy) + ',' + str(average_precision) + ',' + str(average_recall) + '\n')
 
     # 计算平均训练时间和测试时间
     with open(path_time_cost) as file_time_cost:
@@ -77,7 +85,7 @@ def main():
         sum_time_costs_test += float(cost_test)
     average_time_cost_test = sum_time_costs_test / len(time_costs_test)
 
-    with open(path_average_result + '/average_time_cost.csv', 'a') as file_average_time_cost:
+    with open(path_average_result + '/average_train_test_cost.csv', 'a') as file_average_time_cost:
         file_average_time_cost.write(str(average_time_cost_train))
         file_average_time_cost.write(',')
         file_average_time_cost.write(str(average_time_cost_test))
